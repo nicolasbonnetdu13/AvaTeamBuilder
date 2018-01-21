@@ -25,6 +25,10 @@ public class Team {
 		}
 	}
 	
+	public List<Player> GetMembers() {
+		return this.members;
+	}
+	
 	public void AddMember(Player player) {
 		this.members.add(player); 
 	}

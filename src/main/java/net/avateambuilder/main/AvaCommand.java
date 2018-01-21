@@ -112,5 +112,40 @@ public class AvaCommand {
 		mainFile = null;
 		nbJoueurs = 0;
 	}
-
+	
+	@Command(name ="statusAva", type = ExecutorType.USER)
+	private void statusAva(User user, MessageChannel channel, Message message) {
+		
+		
+		channel.sendMessage("BANANA").complete();
+		System.out.println("TESTSTATUS");
+		Battle battle = getCurrentBattle();
+		String status = battle.FormattedString();
+		System.out.println("STATUS : " + status);
+		channel.sendMessage(status).complete();
+	
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

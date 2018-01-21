@@ -104,4 +104,48 @@ public class Battle {
 		return obj;
 	}
 	
+	public String FormattedString(){
+		
+		String message = "'";
+		int armySize = this.army.size();
+		Player player;
+		Team team;
+		
+		message = message + "AvA : " + this.name + "\n";
+		for (int i = 0; i < armySize;i++) {
+			
+			team = army.get(i);
+			message = message + "Equipe : " + String.valueOf(i+1) + "\n";
+			for (int j = 0; j < team.GetMembers().size(); j++) {
+				
+				player = team.GetMembers().get(j);
+				message = message +"  - " + player.getPseudo() + " " + player.getClasse().name() + " lvl" + String.valueOf(player.getLvl()) + "\n";
+			}
+			message = message + "\n";
+		}
+		message = message + "'";
+		return message;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
