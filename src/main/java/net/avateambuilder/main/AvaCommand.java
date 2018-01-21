@@ -1,19 +1,26 @@
-package net.dofusteammaker.main;
+package net.avateambuilder.main;
 
 
-import net.dofusteammaker.main.Command.ExecutorType;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.avateambuilder.main.Command.ExecutorType;
+import net.avateambuilder.model.Battle;
+import net.avateambuilder.model.Player;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 
-public class ATMcmd {
+public class AvaCommand {
 
 	static int nbJoueurs = 0;
 	static String mainFile = null;
 	private final MainBot mainBot;
+	private List<Battle> battles;
 	
-	public ATMcmd(MainBot mainBot) {
+	public AvaCommand(MainBot mainBot) {
 		this.mainBot = mainBot;
+		this.battles = new ArrayList<Battle>();
 	}
 	
 	//!join pseudo classe lvl
@@ -28,10 +35,10 @@ public class ATMcmd {
 
 			// arguments
 			String pseudo = args[1];
-			Classes classe = Classes.valueOf(args[2]);
+			String classe = args[2];
 			int lvl = Integer.parseInt(args[3]);
 			String userId = user.getName();
-			Joueur joueur = new Joueur(pseudo, classe, lvl, userId);
+			Player joueur = new Player(pseudo, classe, lvl, userId);
 
 			if (FileMng.IsRegistered(mainFile, userId) == false) {
 				FileMng.AddPlayer(mainFile, joueur);
@@ -47,9 +54,12 @@ public class ATMcmd {
 	private void startAva(User user, MessageChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
-		mainFile = args[1];
-		FileMng.CreateFile(mainFile);
-		channel.sendMessage("Demarrage de l'Ava: " + mainFile).complete();
+
+		String name = args[1];
+		Battle battle = new Battle(name);
+		this.battles.add(battle);
+		channel.sendMessage("Demarrage de l'Ava: " + battle.getName()).complete();
+		FileMng.SaveCurrentState(this.battles);
 	}
 
 	@Command(name = "stopAva", type = ExecutorType.USER)

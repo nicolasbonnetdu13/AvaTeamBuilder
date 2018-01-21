@@ -1,8 +1,8 @@
-package net.dofusteammaker.main;
+package net.avateambuilder.main;
 
 import java.lang.reflect.Method;
 
-import net.dofusteammaker.main.Command.ExecutorType;
+import net.avateambuilder.main.Command.ExecutorType;
 
 
 public class SimpleCommand{

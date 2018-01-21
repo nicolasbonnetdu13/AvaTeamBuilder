@@ -1,4 +1,4 @@
-package net.dofusteammaker.main;
+package net.avateambuilder.main;
 
 
 import net.dv8tion.jda.core.Permission;

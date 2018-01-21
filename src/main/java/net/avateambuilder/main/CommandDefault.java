@@ -1,7 +1,6 @@
-package net.dofusteammaker.main;
+package net.avateambuilder.main;
 
-import net.dofusteammaker.main.Joueur;
-import net.dofusteammaker.main.Command.ExecutorType;
+import net.avateambuilder.main.Command.ExecutorType;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;

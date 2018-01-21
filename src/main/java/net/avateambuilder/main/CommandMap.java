@@ -1,4 +1,4 @@
-package net.dofusteammaker.main;
+package net.avateambuilder.main;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.dofusteammaker.main.Command.ExecutorType;
+import net.avateambuilder.main.Command.ExecutorType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -25,7 +25,7 @@ public final class CommandMap {
 		this.mainBot = mainBot;
 
 		registerCommand(new CommandDefault(mainBot));
-		registerCommand(new ATMcmd(mainBot));
+		registerCommand(new AvaCommand(mainBot));
 	}
 
 	public String getTag() {
