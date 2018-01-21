@@ -23,7 +23,7 @@ public class ATMcmd {
 			channel.sendMessage("Pas d'AvA en cours. Revenez plus tard ;)").complete();
 		} else {
 			
-			// recupere les arguments
+			// split the arguments
 			String[] args = message.getContentDisplay().split(" ");
 
 			// arguments
@@ -43,17 +43,17 @@ public class ATMcmd {
 		}
 	}
 
-	@Command(name = "startAvA", type = ExecutorType.USER)
-	private void startAvA(User user, MessageChannel channel, Message message) {
+	@Command(name = "startAva", type = ExecutorType.USER)
+	private void startAva(User user, MessageChannel channel, Message message) {
 
 		String[] args = message.getContentDisplay().split(" ");
 		mainFile = args[1];
 		FileMng.CreateFile(mainFile);
-
+		channel.sendMessage("Demarrage de l'Ava: " + mainFile).complete();
 	}
 
-	@Command(name = "stopAvA", type = ExecutorType.USER)
-	private void stopAvA(User user, MessageChannel channel, Message message) {
+	@Command(name = "stopAva", type = ExecutorType.USER)
+	private void stopAva(User user, MessageChannel channel, Message message) {
 		 
 		channel.sendMessage("Fin de l'AvA. bien joué à tous !").complete();
 		mainFile = null;

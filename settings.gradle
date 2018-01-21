@@ -15,4 +15,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'DofusBot_AvATeamMaker'
+rootProject.name = 'AvaTeamBuilder'
