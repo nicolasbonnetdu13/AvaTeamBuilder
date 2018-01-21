@@ -22,16 +22,13 @@ public class MainBot implements Runnable{
 		System.out.println("bot connecté");
 	}
 	
-	
 	public JDA getJda() {
 		return jda;
 	}
 
-
 	public void setRunning(boolean running) {
 		this.running = running;
 	}
-
 
 	@Override
 	public void run() {
@@ -45,8 +42,6 @@ public class MainBot implements Runnable{
 		jda.shutdownNow();
 		System.exit(0);
 	}
-	
-	
 	
 	public static void main(String[] args) {
 		try {

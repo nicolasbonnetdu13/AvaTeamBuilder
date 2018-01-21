@@ -24,7 +24,6 @@ public final class CommandMap {
 	public CommandMap(MainBot mainBot) {
 		this.mainBot = mainBot;
 
-		registerCommand(new CommandDefault(mainBot));
 		registerCommand(new AvaCommand(mainBot));
 	}
 
