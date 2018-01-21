@@ -1,19 +1,27 @@
 package net.avateambuilder.main;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONObject;
 
 import net.avateambuilder.model.Battle;
 import net.avateambuilder.model.Player;
+import net.dv8tion.jda.core.utils.IOUtil;
 
 public class FileMng {
 	
     static int posLvl = 2;
 	static int posUserId = 3;
 	static String folderName = "AvaEvents";
-	
+
 	static String Path(String avaName) {
-		String path = System.getProperty("user.dir") + File.separator + folderName + File.separator + avaName + ".txt";
+		String path = DirectoryPath() + File.separator + avaName + ".txt";
+		return path;
+	}
+	static String DirectoryPath() {
+		String path = System.getProperty("user.dir") + File.separator + folderName;
 		return path;
 	}
 	
@@ -48,101 +56,31 @@ public class FileMng {
 		}
 	}
 	
-	static void AddPlayer(String fileName, Player joueur) {
-
-		String path = Path(fileName);
-		File file = new File(path);
-		
-		try {
-			FileWriter fw = new FileWriter(file, true);
-			PrintWriter pw = new PrintWriter(fw);
-			
-			pw.println(joueur.getPseudo() +" "+ joueur.getClasse() + " " + joueur.getLvl() + " " + joueur.getUserId());
-			pw.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-	static boolean IsRegistered(String fileName, String userId) {
-
-		String path = Path(fileName);
-		File file = new File(path);
-		boolean result = false;
-		String line;
-		String[] args;
-		try {
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);
-			System.out.println("NewUserId : " + userId);
-			while (((line = br.readLine()) != null) && (result == false)) {
-				args = line.split(" ");
-				System.out.println("UserId : " + args[3]);
-				
-				if (args[3] == userId) {
-					result = true;
+	static List<Battle> GetLastState() {
+		List<Battle> battles = new ArrayList<Battle>();
+		File folder = new File(DirectoryPath());
+		File[] listOfFiles = folder.listFiles();
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile()) {
+	            try {
+					FileInputStream is = new FileInputStream(folderName + File.separator + listOfFiles[i].getName());
+		            DataInputStream in = new DataInputStream(is);
+		            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		            String jsonTxt = "";
+		            String tmp = "";
+		            while((tmp = br.readLine()) != null){
+		            	jsonTxt = jsonTxt + tmp;
+		            }
+		            in.close();
+		            JSONObject objectJson = new JSONObject(jsonTxt);     
+		            battles.add(new Battle(objectJson));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
-		} catch (FileNotFoundException e) {
-
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-
-		return result;
-	}
-
-    
-    static void AddToTeam(String fileName, Player joueur) {
-        
-        String path = Path(fileName);
-        File file = new File(path);
-        FileReader fr;
-        int linecounter = 1;
-        int linetoread = 1;
-        int lvl;
-        String line;
-        String[] args;
-        try {
-            fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            
-            while ((line = br.readLine()) != "EOF") {
-                // A REVOIR
-            if (linecounter == linetoread) {
-                if (line == null) {
-                    // TODO AJOUTER LE JOUEUR LINE A CETTE LIGNE                    
-                }
-                else {
-                    args = line.split(" ");
-                    lvl = Integer.parseInt(args[posLvl]);
-                    if ((((joueur.getLvl() >= 190) && (lvl < 190)) || ((joueur.getLvl() < 190) && (lvl >= 190))) 
-                        || (joueur.getClasse().name().equals(args[1]))) {
-                        linetoread = (linetoread/5+1)*5+1;
-                    }
-                    else {
-                        linetoread++;
-                    }
-                }
-            }
-            linecounter++;
-        }        
-        } catch (FileNotFoundException e) {
-            
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
+		return battles;
     }
 
 }

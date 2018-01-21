@@ -49,11 +49,11 @@ public class Player {
 		this.level = obj.getInt("Level");
 	}
 
-	public int getLvl() {
+	public int getLevel() {
 		return level;
 	}
 
-	public void setLvl(int lvl) {
+	public void setLevel(int lvl) {
 		this.level = lvl;
 	}
 
@@ -83,7 +83,7 @@ public class Player {
 	
 	public Classe ToClasse(String input) {
 		Classe classe = Classe.unknown;
-
+		input = input.toLowerCase();
 		if (input.equals("eniripsa") || input.equals("eni"))
 		{
 			classe = Classe.eniripsa;

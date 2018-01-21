@@ -37,6 +37,14 @@ public class Battle {
 				this.soldiers.add(player);
 			}
 		}
+
+        JSONArray armyJson = objectJson.getJSONArray("Army");
+        for (Object object : armyJson) {
+			if(object.getClass().equals(JSONObject.class)) {
+				Team team = new Team((JSONObject)object);
+				this.army.add(team);
+			}
+		}
 	}
 
 	public String getName() {
@@ -56,33 +64,46 @@ public class Battle {
 	}
 	
 	public boolean AddSoldier(Player player) {
-		boolean contain = this.soldiers.contains(player);
-		if (contain) {	
+		boolean contain = ContainsSoldier(player);
+		if (!contain) {	
 			this.soldiers.add(player);
+			AutoAddToTeam(player);
 		}
-		return contain;
+		return !contain;
 	}
 	
-	public void RemoveSoldier(Player player) {
-		if (this.soldiers.contains(player)) {			
+	public void AutoAddToTeam(Player player) {
+		for (Team team : army) {
+			if (player.level >= team.getLevelMinimum() && 
+					player.level < team.getLevelMaximum() && 
+					!team.ContainsClasse(player.getClasse()) &&
+					team.GetMembers().size() < 5) {
+				team.AddMember(player);
+				return;
+			}
+		}
+		boolean above190 = player.getLevel() >= 190;
+		Team newTeam = new Team(above190 ? 190 : 0, above190 ? 201 : 190);
+		newTeam.AddMember(player);
+		this.army.add(newTeam);
+	}
+	
+	public String RemoveSoldier(Player player) {
+		String playerName = "";
+		if (ContainsSoldier(player)) {
+			playerName = this.soldiers.get(this.soldiers.indexOf(player)).getPseudo();
 			this.soldiers.remove(player); 
 		}
+		for (Team team : army) {
+			if (team.ContainsMember(player)) {
+				team.RemoveMember(player);
+			}
+		}
+		return playerName;
 	}
 	
-	public boolean IsSoldier(Player player) {
+	public boolean ContainsSoldier(Player player) {
 		return this.soldiers.contains(player); 
-	}
-	
-	public void AddTeam(Team team) {
-		this.army.add(team); 
-	}
-	
-	public void RemoveTeam(Team team) {
-		this.army.remove(team); 
-	}
-	
-	public boolean IsTeam(Team team) {
-		return this.army.contains(team); 
 	}
 	
 	public JSONObject ToJson() {
@@ -106,24 +127,19 @@ public class Battle {
 	
 	public String FormattedString(){
 		
-		String message = "'";
+		String message = "```";
 		int armySize = this.army.size();
-		Player player;
-		Team team;
-		
 		message = message + "AvA : " + this.name + "\n";
 		for (int i = 0; i < armySize;i++) {
 			
-			team = army.get(i);
-			message = message + "Equipe : " + String.valueOf(i+1) + "\n";
-			for (int j = 0; j < team.GetMembers().size(); j++) {
-				
-				player = team.GetMembers().get(j);
-				message = message +"  - " + player.getPseudo() + " " + player.getClasse().name() + " lvl" + String.valueOf(player.getLvl()) + "\n";
+			Team team = army.get(i);
+			message = message + "Equipe"+ String.valueOf(i+1) + " :\n";
+			for (Player player : team.GetMembers()) {
+				message = message +"  - " + player.getPseudo() + " " + player.getClasse().name() + " lvl " + String.valueOf(player.getLevel()) + "\n";
 			}
 			message = message + "\n";
 		}
-		message = message + "'";
+		message = message + "```";
 		return message;
 	}
 }

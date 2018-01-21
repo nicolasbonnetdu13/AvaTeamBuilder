@@ -23,7 +23,7 @@ public class AvaCommand {
 	
 	public AvaCommand(MainBot mainBot) {
 		this.mainBot = mainBot;
-		this.battles = new ArrayList<Battle>();
+		this.battles = FileMng.GetLastState();
 	}
 	
 	//!join pseudo classe lvl
@@ -42,7 +42,12 @@ public class AvaCommand {
 		}
 		String pseudo = args[1];
 		String classe = args[2];
-		int level = Integer.parseInt(args[3]);
+		String levelString = args[3];
+		if (!levelString.matches("\\d+")) {
+			channel.sendMessage("Il manque des infos pour rejoindre l'ava -> `!join <pseudo> <class> <level>`").complete();
+			return;
+		}
+		int level = Math.min(Integer.parseInt(args[3]), 200);
 		String userId = user.getName();
 		Player player = new Player(pseudo, classe, level, userId);
 		if (player.getClasse() == Classe.unknown) {
@@ -55,7 +60,7 @@ public class AvaCommand {
 		boolean succeed = battle.AddSoldier(player);
 		
 		if (succeed) {
-			channel.sendMessage(player.getPseudo() + " " + player.getClasse() + " lvl " + player.getLvl() + " rejoint la bataille !").complete();
+			channel.sendMessage(player.getPseudo() + " " + player.getClasse() + " lvl " + player.getLevel() + " rejoint la bataille !").complete();
 		} else {
 			channel.sendMessage(player.getPseudo() + ", tu fais déjà parti de la bataille !").complete();
 		}
@@ -72,10 +77,11 @@ public class AvaCommand {
 			channel.sendMessage("L'Ava est déjà terminé").complete();
 		} else {
 			Player player = new Player(user.getName());
-			battle.RemoveSoldier(player);
+			String playerName = battle.RemoveSoldier(player);
 				
-			channel.sendMessage(player.getPseudo() + " a quitté la bataille ! :wave:")
-					.complete();
+			if(!playerName.isEmpty()) {				
+				channel.sendMessage(playerName + " a quitté la bataille ! :wave:").complete();
+			}
 			FileMng.SaveCurrentState(this.battles);
 		}
 	}
@@ -95,7 +101,6 @@ public class AvaCommand {
 
 	@Command(name = "startAva", type = ExecutorType.USER)
 	private void startAva(User user, MessageChannel channel, Message message) {
-
 		String[] args = message.getContentDisplay().split(" ");
 
 		String name = args[1];
@@ -116,14 +121,9 @@ public class AvaCommand {
 	@Command(name ="statusAva", type = ExecutorType.USER)
 	private void statusAva(User user, MessageChannel channel, Message message) {
 		
-		
-		channel.sendMessage("BANANA").complete();
-		System.out.println("TESTSTATUS");
 		Battle battle = getCurrentBattle();
 		String status = battle.FormattedString();
-		System.out.println("STATUS : " + status);
 		channel.sendMessage(status).complete();
-	
 	}
 }
 
