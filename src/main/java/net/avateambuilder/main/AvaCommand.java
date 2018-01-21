@@ -118,7 +118,7 @@ public class AvaCommand {
 		nbJoueurs = 0;
 	}
 	
-	@Command(name ="statusAva", type = ExecutorType.USER)
+	@Command(name = "statusAva", type = ExecutorType.USER)
 	private void statusAva(User user, MessageChannel channel, Message message) {
 		
 		Battle battle = getCurrentBattle();
@@ -126,26 +126,4 @@ public class AvaCommand {
 		channel.sendMessage(status).complete();
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

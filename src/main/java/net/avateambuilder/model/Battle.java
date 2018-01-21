@@ -127,11 +127,16 @@ public class Battle {
 	
 	public String FormattedString(){
 		
+<<<<<<< Updated upstream
 		String message = "```";
+=======
+		String message = "`";
+>>>>>>> Stashed changes
 		int armySize = this.army.size();
 		message = message + "AvA : " + this.name + "\n";
 		for (int i = 0; i < armySize;i++) {
 			
+<<<<<<< Updated upstream
 			Team team = army.get(i);
 			message = message + "Equipe"+ String.valueOf(i+1) + " :\n";
 			for (Player player : team.GetMembers()) {
@@ -140,28 +145,19 @@ public class Battle {
 			message = message + "\n";
 		}
 		message = message + "```";
+=======
+			team = army.get(i);
+			message = message + "Equipe : " + String.valueOf(i+1) + "\n";
+			for (int j = 0; j < team.GetMembers().size(); j++) {
+				
+				player = team.GetMembers().get(j);
+				message = message + "  - " + player.getPseudo() + " " + player.getClasse().name() + " lvl" + String.valueOf(player.getLvl()) + "\n";
+			}
+			message = message + "\n";
+		}
+		message = message + "`";
+>>>>>>> Stashed changes
 		return message;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
