@@ -1,7 +1,9 @@
 package net.avateambuilder.main;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import net.avateambuilder.main.Command.ExecutorType;
@@ -26,7 +28,18 @@ public class AvaCommand {
 	//!join pseudo classe lvl
 	@Command(name = "join", type = ExecutorType.USER)
 	private void join(User user, MessageChannel channel, Message message) { 
-		if (mainFile == null) {
+
+		LocalDateTime today = LocalDateTime.now();
+		Battle battle = null;
+		for (Battle aBattle : this.battles) {
+			LocalDateTime date = aBattle.getDate();
+			if (date.getYear() == today.getYear() &&
+				date.getDayOfYear() == today.getDayOfYear()) {
+				battle = aBattle;
+			}
+		}
+		
+		if (battle == null) {
 			channel.sendMessage("Pas d'AvA en cours. Revenez plus tard ;)").complete();
 		} else {
 			
@@ -36,17 +49,15 @@ public class AvaCommand {
 			// arguments
 			String pseudo = args[1];
 			String classe = args[2];
-			int lvl = Integer.parseInt(args[3]);
+			int level = Integer.parseInt(args[3]);
 			String userId = user.getName();
-			Player joueur = new Player(pseudo, classe, lvl, userId);
+			Player player = new Player(pseudo, classe, level, userId);
 
-			if (FileMng.IsRegistered(mainFile, userId) == false) {
-				FileMng.AddPlayer(mainFile, joueur);
-				nbJoueurs = nbJoueurs + 1;
-			}
+			battle.AddSoldier(player);
 				
-			channel.sendMessage(joueur.getPseudo() + " " + joueur.getClasse() + " lvl" + joueur.getLvl() + " rejoint la bataille !")
+			channel.sendMessage(player.getPseudo() + " " + player.getClasse() + " lvl " + player.getLvl() + " rejoint la bataille !")
 					.complete();
+			FileMng.SaveCurrentState(this.battles);
 		}
 	}
 

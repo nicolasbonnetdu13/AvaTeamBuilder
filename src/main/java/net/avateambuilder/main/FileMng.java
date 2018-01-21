@@ -32,12 +32,11 @@ public class FileMng {
 	
 	static void SaveCurrentState(List<Battle> battles) {
 		for (Battle battle : battles) {
-
 			String path = Path(battle.getName());
 			File file = new File(path);
 			CreateFileIfNeeded(file);
 			try {
-				FileWriter fw = new FileWriter(file, true);
+				FileWriter fw = new FileWriter(file, false);
 				PrintWriter pw = new PrintWriter(fw);
 				
 				pw.print(battle.ToJson());
