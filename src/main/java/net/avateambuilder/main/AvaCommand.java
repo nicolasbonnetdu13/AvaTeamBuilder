@@ -9,6 +9,7 @@ import java.util.List;
 import net.avateambuilder.main.Command.ExecutorType;
 import net.avateambuilder.model.Battle;
 import net.avateambuilder.model.Player;
+import net.avateambuilder.model.Player.Classe;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -29,8 +30,59 @@ public class AvaCommand {
 	@Command(name = "join", type = ExecutorType.USER)
 	private void join(User user, MessageChannel channel, Message message) { 
 
-		LocalDateTime today = LocalDateTime.now();
+		Battle battle = getCurrentBattle();
+		if (battle == null) {
+			channel.sendMessage("Pas d'AvA en cours. Revenez plus tard ;)").complete();
+			return;
+		}
+		String[] args = message.getContentDisplay().split(" ");
+		if (args.length < 4) {
+			channel.sendMessage("Il manque des infos pour rejoindre l'ava -> `!join <pseudo> <class> <level>`").complete();
+			return;
+		}
+		String pseudo = args[1];
+		String classe = args[2];
+		int level = Integer.parseInt(args[3]);
+		String userId = user.getName();
+		Player player = new Player(pseudo, classe, level, userId);
+		if (player.getClasse() == Classe.unknown) {
+			channel.sendMessage("Je n'ai pas compris ta classe. Voici la liste de classe possible: `eniripsa, "
+					+ "iop, sacrieur, huppermage, osamodas, sadida, xelor, cra, steamer, eliotrope, ecaflip, "
+					+ "pandawa, sram, ouginak, feca, zobal, roublard, enutrof`").complete();
+			return;
+		}
+
+		boolean succeed = battle.AddSoldier(player);
+		
+		if (succeed) {
+			channel.sendMessage(player.getPseudo() + " " + player.getClasse() + " lvl " + player.getLvl() + " rejoint la bataille !").complete();
+		} else {
+			channel.sendMessage(player.getPseudo() + ", tu fais déjà parti de la bataille !").complete();
+		}
+		FileMng.SaveCurrentState(this.battles);
+
+	}
+	
+	//!leave pseudo classe lvl
+	@Command(name = "leave", type = ExecutorType.USER)
+	private void leave(User user, MessageChannel channel) { 
+
+		Battle battle = getCurrentBattle();
+		if (battle == null) {
+			channel.sendMessage("L'Ava est déjà terminé").complete();
+		} else {
+			Player player = new Player(user.getName());
+			battle.RemoveSoldier(player);
+				
+			channel.sendMessage(player.getPseudo() + " a quitté la bataille ! :wave:")
+					.complete();
+			FileMng.SaveCurrentState(this.battles);
+		}
+	}
+
+	private Battle getCurrentBattle() {
 		Battle battle = null;
+		LocalDateTime today = LocalDateTime.now();
 		for (Battle aBattle : this.battles) {
 			LocalDateTime date = aBattle.getDate();
 			if (date.getYear() == today.getYear() &&
@@ -38,27 +90,7 @@ public class AvaCommand {
 				battle = aBattle;
 			}
 		}
-		
-		if (battle == null) {
-			channel.sendMessage("Pas d'AvA en cours. Revenez plus tard ;)").complete();
-		} else {
-			
-			// split the arguments
-			String[] args = message.getContentDisplay().split(" ");
-
-			// arguments
-			String pseudo = args[1];
-			String classe = args[2];
-			int level = Integer.parseInt(args[3]);
-			String userId = user.getName();
-			Player player = new Player(pseudo, classe, level, userId);
-
-			battle.AddSoldier(player);
-				
-			channel.sendMessage(player.getPseudo() + " " + player.getClasse() + " lvl " + player.getLvl() + " rejoint la bataille !")
-					.complete();
-			FileMng.SaveCurrentState(this.battles);
-		}
+		return battle;
 	}
 
 	@Command(name = "startAva", type = ExecutorType.USER)

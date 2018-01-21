@@ -31,6 +31,10 @@ public class Player {
 	String pseudo;
 	String userId; //ID discord
 	
+	public Player(String userId) {
+		this.userId = userId;
+	}
+	
 	public Player(String pseudo, String classe, int lvl, String userId) {
 		this.level = lvl;
 		this.pseudo = pseudo;
@@ -153,6 +157,11 @@ public class Player {
 			classe = Classe.enutrof;
 		}
 		return classe;
+	}
+
+	@Override
+	public boolean equals(Object object){
+		return (object.getClass().equals(Player.class)) && this.userId.equals(((Player)object).userId);
 	}
 	
 	public JSONObject ToJson() {

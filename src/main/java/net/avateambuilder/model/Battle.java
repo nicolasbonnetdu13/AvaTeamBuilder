@@ -55,12 +55,18 @@ public class Battle {
 		this.date = date;
 	}
 	
-	public void AddSoldier(Player player) {
-		this.soldiers.add(player); 
+	public boolean AddSoldier(Player player) {
+		boolean contain = this.soldiers.contains(player);
+		if (contain) {	
+			this.soldiers.add(player);
+		}
+		return contain;
 	}
 	
 	public void RemoveSoldier(Player player) {
-		this.soldiers.remove(player); 
+		if (this.soldiers.contains(player)) {			
+			this.soldiers.remove(player); 
+		}
 	}
 	
 	public boolean IsSoldier(Player player) {
