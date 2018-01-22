@@ -10,6 +10,7 @@ import net.avateambuilder.main.Command.ExecutorType;
 import net.avateambuilder.model.Battle;
 import net.avateambuilder.model.Player;
 import net.avateambuilder.model.Player.Classe;
+import net.avateambuilder.model.Team;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -122,7 +123,20 @@ public class AvaCommand {
 	private void statusAva(User user, MessageChannel channel, Message message) {
 		
 		Battle battle = getCurrentBattle();
-		String status = battle.FormattedString();
+		String status = "```";
+		status = status + battle.FormattedString();
+		status = status + "```";
+		channel.sendMessage(status).complete();
+	}
+	
+	@Command(name = "myTeam", type = ExecutorType.USER)
+	private void myTeam(User user, MessageChannel channel, Message message) {
+		
+		Battle battle = getCurrentBattle();
+		Team team = battle.GetTeamForPlayer(new Player(user.getName()));
+		String status = "```";
+		status = status + team.FormattedString();
+		status = status + "```";
 		channel.sendMessage(status).complete();
 	}
 }

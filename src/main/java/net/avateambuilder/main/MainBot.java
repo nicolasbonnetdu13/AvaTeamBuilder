@@ -38,7 +38,6 @@ public class MainBot implements Runnable{
 		}
 		
 		scanner.close();
-		System.out.println("Un MARRON !");
 		jda.shutdownNow();
 		System.exit(0);
 	}

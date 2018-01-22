@@ -10,17 +10,22 @@ import org.json.JSONObject;
 import net.avateambuilder.model.Player.Classe;
 
 public class Team {
+	private int id;
 	List<Player> members;
 	int levelMinimum;
 	int levelMaximum;
 		
-	public Team(int levelMinimum, int levelMaximal) {
+	public Team(int id, int levelMinimum, int levelMaximal) {
+		this.id = id;
 		this.members = new ArrayList<Player>();
 		this.levelMinimum = levelMinimum;
+		this.levelMinimum = levelMaximal;
 	}
 	
 	public Team(JSONObject objectJson) {
+		this.id = objectJson.getInt("Id");
 		this.levelMinimum = objectJson.getInt("LevelMinimum");
+		this.levelMaximum = objectJson.getInt("LevelMaximum");
 		this.members = new ArrayList<Player>();
         JSONArray membersJson = objectJson.getJSONArray("Members");
         for (Object object : membersJson) {
@@ -54,6 +59,14 @@ public class Team {
 		this.levelMaximum = levelMaximum;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public List<Player> GetMembers() {
 		return this.members;
 	}
@@ -72,12 +85,24 @@ public class Team {
 	
 	public JSONObject ToJson() {
         JSONObject obj = new JSONObject();
+        obj.put("Id", this.id);
         obj.put("LevelMinimum", this.levelMinimum);
+        obj.put("LevelMaximum", this.levelMaximum);
         JSONArray membersJson = new JSONArray();
         for (Player player : this.members) {
 	        membersJson.put(player.ToJson());
 		}
         obj.put("Members", membersJson);
 		return obj;
+	}
+	
+	public String FormattedString(){
+		
+		String message = "";
+		message = message + "Equipe "+ this.id + " :\n";
+		for (Player player : members) {
+			message = message +"  - " + player.getPseudo() + " " + player.getClasse().name() + " lvl " + String.valueOf(player.getLevel()) + "\n";
+		}
+		return message;
 	}
 }

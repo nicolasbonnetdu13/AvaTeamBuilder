@@ -83,7 +83,7 @@ public class Battle {
 			}
 		}
 		boolean above190 = player.getLevel() >= 190;
-		Team newTeam = new Team(above190 ? 190 : 0, above190 ? 201 : 190);
+		Team newTeam = new Team(army.size()+1, above190 ? 190 : 0, above190 ? 201 : 190);
 		newTeam.AddMember(player);
 		this.army.add(newTeam);
 	}
@@ -104,6 +104,14 @@ public class Battle {
 	
 	public boolean ContainsSoldier(Player player) {
 		return this.soldiers.contains(player); 
+	}
+
+	public Team GetTeamForPlayer(Player player) {
+		for (Team team : army) {
+			if (team.ContainsMember(player)) 
+				return team;
+		}
+		return null;
 	}
 	
 	public JSONObject ToJson() {
@@ -126,37 +134,15 @@ public class Battle {
 	}
 	
 	public String FormattedString(){
-		
-<<<<<<< Updated upstream
-		String message = "```";
-=======
-		String message = "`";
->>>>>>> Stashed changes
+
+		String message = "";
 		int armySize = this.army.size();
 		message = message + "AvA : " + this.name + "\n";
 		for (int i = 0; i < armySize;i++) {
-			
-<<<<<<< Updated upstream
 			Team team = army.get(i);
-			message = message + "Equipe"+ String.valueOf(i+1) + " :\n";
-			for (Player player : team.GetMembers()) {
-				message = message +"  - " + player.getPseudo() + " " + player.getClasse().name() + " lvl " + String.valueOf(player.getLevel()) + "\n";
-			}
+			message = message + team.FormattedString();
 			message = message + "\n";
 		}
-		message = message + "```";
-=======
-			team = army.get(i);
-			message = message + "Equipe : " + String.valueOf(i+1) + "\n";
-			for (int j = 0; j < team.GetMembers().size(); j++) {
-				
-				player = team.GetMembers().get(j);
-				message = message + "  - " + player.getPseudo() + " " + player.getClasse().name() + " lvl" + String.valueOf(player.getLvl()) + "\n";
-			}
-			message = message + "\n";
-		}
-		message = message + "`";
->>>>>>> Stashed changes
 		return message;
 	}
 }
