@@ -4,6 +4,8 @@ package net.avateambuilder.main;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import net.avateambuilder.main.Command.ExecutorType;
@@ -35,14 +37,14 @@ public class AvaCommand {
 		}
 		String[] args = message.getContentDisplay().split(" ");
 		if (args.length < 4) {
-			channel.sendMessage("Il manque des infos pour rejoindre l'ava -> `!join <pseudo> <class> <level>`").complete();
+			channel.sendMessage("Il manque des infos pour rejoindre l'ava :noob: -> `!join <pseudo> <class> <level>`").complete();
 			return;
 		}
 		String pseudo = args[1];
 		String classe = args[2];
 		String levelString = args[3];
 		if (!levelString.matches("\\d+")) {
-			channel.sendMessage("Il manque des infos pour rejoindre l'ava -> `!join <pseudo> <class> <level>`").complete();
+			channel.sendMessage("Il manque des infos pour rejoindre l'ava :noob: -> `!join <pseudo> <class> <level>`").complete();
 			return;
 		}
 		int level = Math.min(Integer.parseInt(levelString), 200);
@@ -58,7 +60,7 @@ public class AvaCommand {
 		boolean succeed = battle.AddSoldier(player);
 		
 		if (succeed) {
-			channel.sendMessage(player.getPseudo() + " " + player.getClasse() + " lvl " + player.getLevel() + " rejoint la bataille !").complete();
+			channel.sendMessage(player.getPseudo() + " " + player.getClasse() + " lvl " + player.getLevel() + " rejoint la bataille ! :muscle:").complete();
 		} else {
 			channel.sendMessage(player.getPseudo() + ", tu fais déjà parti de la bataille !").complete();
 		}
@@ -77,23 +79,22 @@ public class AvaCommand {
 			String playerName = battle.RemoveSoldier(player);
 				
 			if(!playerName.isEmpty()) {				
-				channel.sendMessage(playerName + " a quitté la bataille ! :wave:").complete();
+				channel.sendMessage(playerName + " a quitté la bataille ! :cry:").complete();
 			}
 			FileMng.SaveCurrentState(this.battles);
 		}
 	}
 
 	private Battle getLastBattle() {
-		Battle battle = null;
-		LocalDateTime today = LocalDateTime.now();
-		for (Battle aBattle : this.battles) {
-			LocalDateTime date = aBattle.getDate();
-			if (date.getYear() == today.getYear() &&
-				date.getDayOfYear() == today.getDayOfYear()) {
-				battle = aBattle;
-			}
+		Collections.sort(battles, new Comparator<Battle>() {
+			  public int compare(Battle o1, Battle o2) {
+			      return o1.getDate().compareTo(o2.getDate());
+			  }
+			});
+		for (Battle battle : battles) {
+			if(battle.isOngoing()) return battle;
 		}
-		return battle;
+		return null;
 	}
 
 	@Command(name = "startAvA", type = ExecutorType.USER)
@@ -108,10 +109,11 @@ public class AvaCommand {
 		String name = args[1];
 		Battle battle = new Battle(name);
 		Battle lastBattle = getLastBattle();
-		if (lastBattle.getName().equals(battle.getName())) {
-			channel.sendMessage("L'Ava \"" + battle.getName() + "\" existe déjà").complete();
+		if (lastBattle != null) {
+			channel.sendMessage("Une Ava est déjà en cours !").complete();
 			return;
 		}
+		battle.setOngoing(true);
 		this.battles.add(battle);
 		channel.sendMessage("Demarrage de l'Ava: " + battle.getName()).complete();
 		FileMng.SaveCurrentState(this.battles);
@@ -119,14 +121,25 @@ public class AvaCommand {
 
 	@Command(name = "stopAva", type = ExecutorType.USER)
 	private void stopAva(User user, MessageChannel channel, Message message) {
-		 
-		channel.sendMessage("Fin de l'AvA. bien joué à tous !").complete();
+
+		Battle battle = getLastBattle();
+		if (battle == null) {
+			channel.sendMessage("Pas d'AvA en cours.").complete();
+			return;
+		}
+		battle.setOngoing(false);
+		channel.sendMessage("Fin de l'AvA. Bien joué à tous ! :muscle:").complete();
+		FileMng.SaveCurrentState(this.battles);
 	}
 	
 	@Command(name = "statusAva", type = ExecutorType.USER)
 	private void statusAva(User user, MessageChannel channel, Message message) {
 		
 		Battle battle = getLastBattle();
+		if (battle == null) {
+			channel.sendMessage("Pas d'AvA en cours.").complete();
+			return;
+		}
 		String status = "```";
 		status = status + battle.FormattedString();
 		status = status + "```";
@@ -137,6 +150,10 @@ public class AvaCommand {
 	private void myTeam(User user, MessageChannel channel, Message message) {
 		
 		Battle battle = getLastBattle();
+		if (battle == null) {
+			channel.sendMessage("Pas d'AvA en cours.").complete();
+			return;
+		}
 		Team team = battle.GetTeamForPlayer(new Player(user.getName(), ""));
 		String status = "```";
 		status = status + team.FormattedString();
@@ -148,9 +165,13 @@ public class AvaCommand {
 	private void movePlayer(User user, MessageChannel channel, Message message) {
 
 		Battle battle = getLastBattle();
+		if (battle == null) {
+			channel.sendMessage("Pas d'AvA en cours.").complete();
+			return;
+		}
 		String[] args = message.getContentDisplay().split(" ");
 		if (args.length < 3) {
-			channel.sendMessage("Il manque des infos pour deplacer un joueur -> `!movePlayer <pseudo> <teamId>`").complete();
+			channel.sendMessage("Il manque des infos pour deplacer un joueur :noob: -> `!movePlayer <pseudo> <teamId>`").complete();
 			return;
 		}
 		String pseudo = args[1];
@@ -161,7 +182,7 @@ public class AvaCommand {
 		}
 		String teamIdString = args[2];
 		if (!teamIdString.matches("\\d+")) {
-			channel.sendMessage("L'équipe doit être un nombre. `!movePlayer <pseudo> <teamId>`").complete();
+			channel.sendMessage("L'équipe doit être un nombre. :noob: `!movePlayer <pseudo> <teamId>`").complete();
 			return;
 		}
 		int teamId = Math.min(Integer.parseInt(teamIdString), battle.NumberOfTeam()+1);
@@ -169,5 +190,31 @@ public class AvaCommand {
 		channel.sendMessage(player.getPseudo() + " a été déplacé dans l'équipe " + teamId).complete();
 		FileMng.SaveCurrentState(this.battles);
 	}
+ 
+	@Command(name = "kick", type = ExecutorType.USER)
+	private void kick(User user, MessageChannel channel, Message message) {
+
+		Battle battle = getLastBattle();
+		if (battle == null) {
+			channel.sendMessage("Pas d'AvA en cours.").complete();
+			return;
+		}
+		String[] args = message.getContentDisplay().split(" ");
+		if (args.length < 2) {
+			channel.sendMessage("Il manque des infos pour expluser un joueur :noob: -> `!kick <pseudo>`").complete();
+			return;
+		}
+		String pseudo = args[1];
+		Player player = battle.GetPlayerWithPseudo(pseudo);
+		if (player == null) {
+			channel.sendMessage("Ce joueur ne fait pas parti de l'Ava.").complete();
+			return;
+		}
+		battle.RemoveSoldier(player);
+		channel.sendMessage(player.getPseudo() + " a été explusé de l'Ava :smiling_imp:").complete();
+		FileMng.SaveCurrentState(this.battles);
+		
+	}
+	
 }
 

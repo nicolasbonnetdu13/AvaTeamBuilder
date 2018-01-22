@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Battle {
+	private boolean isOngoing;
 	private String name;
 	private LocalDateTime date;
 	List<Team> army;
@@ -24,9 +25,10 @@ public class Battle {
 	public Battle(JSONObject objectJson) {
 		this.army = new ArrayList<Team>();
 		this.soldiers = new ArrayList<Player>();
-		
+
 		this.name = objectJson.getString("Name");
-		String dateString = objectJson.getString("Date");
+		this.isOngoing = objectJson.getBoolean("IsOngoing");
+        String dateString = objectJson.getString("Date");
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 		this.date = LocalDateTime.parse(dateString, formatter);
 
@@ -63,6 +65,14 @@ public class Battle {
 		this.date = date;
 	}
 	
+	public boolean isOngoing() {
+		return isOngoing;
+	}
+
+	public void setOngoing(boolean isOngoing) {
+		this.isOngoing = isOngoing;
+	}
+
 	public boolean AddSoldier(Player player) {
 		boolean contain = ContainsSoldier(player);
 		if (!contain) {	
@@ -146,6 +156,7 @@ public class Battle {
 	public JSONObject ToJson() {
         JSONObject obj = new JSONObject();
         obj.put("Name", this.name);
+        obj.put("IsOngoing", this.isOngoing);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String formattedDateTime = this.date.format(formatter);
         obj.put("Date", formattedDateTime);
