@@ -40,7 +40,3 @@ public class BotListener implements EventListener {
 	}
 
 }
-
-/*			if (event.getChannel().getName().equals(salon)) { 
-
-}*/

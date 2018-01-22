@@ -31,8 +31,9 @@ public class Player {
 	String pseudo;
 	String userId; //ID discord
 	
-	public Player(String userId) {
+	public Player(String userId, String pseudo) {
 		this.userId = userId;
+		this.pseudo = pseudo;
 	}
 	
 	public Player(String pseudo, String classe, int lvl, String userId) {
@@ -161,7 +162,9 @@ public class Player {
 
 	@Override
 	public boolean equals(Object object){
-		return (object.getClass().equals(Player.class)) && this.userId.equals(((Player)object).userId);
+		return (object.getClass().equals(Player.class)) &&
+				(( (this.userId.equals(((Player)object).userId)) || this.pseudo.equals(((Player)object).pseudo) )
+						);
 	}
 	
 	public JSONObject ToJson() {

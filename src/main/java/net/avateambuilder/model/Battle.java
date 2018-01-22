@@ -105,6 +105,14 @@ public class Battle {
 	public boolean ContainsSoldier(Player player) {
 		return this.soldiers.contains(player); 
 	}
+	
+	public Player GetPlayerWithPseudo(String pseudo) {
+		Player player = new Player("", pseudo);
+		if(ContainsSoldier(player)) {
+			return this.soldiers.get(this.soldiers.indexOf(player));
+		}
+		return null; 
+	}
 
 	public Team GetTeamForPlayer(Player player) {
 		for (Team team : army) {
@@ -112,6 +120,27 @@ public class Battle {
 				return team;
 		}
 		return null;
+	}
+	
+	public void MovePlayerToTeam(Player player, int teamId) {
+		for (Team team : army) {
+			if (team.ContainsMember(player)) {
+				team.RemoveMember(player);
+			}
+		}
+		Team team = null; 
+		if (teamId-1 < army.size()) {
+			team = army.get(teamId-1);
+		} else {
+			boolean above190 = player.getLevel() >= 190;
+			team = new Team(teamId, above190 ? 190 : 0, above190 ? 201 : 190);
+			army.add(team);
+		}
+		team.AddMember(player);
+	}
+	
+	public int NumberOfTeam() {
+		return this.army.size(); 
 	}
 	
 	public JSONObject ToJson() {

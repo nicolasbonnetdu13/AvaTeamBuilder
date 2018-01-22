@@ -15,11 +15,11 @@ public class Team {
 	int levelMinimum;
 	int levelMaximum;
 		
-	public Team(int id, int levelMinimum, int levelMaximal) {
+	public Team(int id, int levelMinimum, int levelMaximum) {
 		this.id = id;
 		this.members = new ArrayList<Player>();
 		this.levelMinimum = levelMinimum;
-		this.levelMinimum = levelMaximal;
+		this.levelMaximum = levelMaximum;
 	}
 	
 	public Team(JSONObject objectJson) {
@@ -99,7 +99,7 @@ public class Team {
 	public String FormattedString(){
 		
 		String message = "";
-		message = message + "Equipe "+ this.id + " :\n";
+		message = message + "Equipe "+ this.id + " (" + this.levelMinimum  + " - " + String.valueOf(this.levelMaximum-1) + ") :\n";
 		for (Player player : members) {
 			message = message +"  - " + player.getPseudo() + " " + player.getClasse().name() + " lvl " + String.valueOf(player.getLevel()) + "\n";
 		}

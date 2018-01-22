@@ -1,6 +1,7 @@
 package net.avateambuilder.main;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +17,9 @@ public class FileMng {
 	static int posUserId = 3;
 	static String folderName = "AvaEvents";
 
-	static String Path(String avaName) {
-		String path = DirectoryPath() + File.separator + avaName + ".txt";
+	static String Path(Battle battle) {
+		LocalDateTime date = battle.getDate();
+		String path = DirectoryPath() + File.separator + battle.getName() + "-" + date.getYear() + "-" + date.getDayOfYear() + ".txt";
 		return path;
 	}
 	static String DirectoryPath() {
@@ -40,7 +42,7 @@ public class FileMng {
 	
 	static void SaveCurrentState(List<Battle> battles) {
 		for (Battle battle : battles) {
-			String path = Path(battle.getName());
+			String path = Path(battle);
 			File file = new File(path);
 			CreateFileIfNeeded(file);
 			try {
