@@ -97,13 +97,9 @@ public class AvaCommand {
 		return null;
 	}
 
-	@Command(name = "startAvA", type = ExecutorType.USER)
-	private void startAvA(User user, MessageChannel channel, Message message) {
-		startAva(user, channel, message);
-	}
-
 	@Command(name = "startAva", type = ExecutorType.USER)
 	private void startAva(User user, MessageChannel channel, Message message) {
+
 		String[] args = message.getContentDisplay().split(" ");
 
 		String name = args[1];
@@ -131,6 +127,16 @@ public class AvaCommand {
 		channel.sendMessage("Fin de l'AvA. Bien joué à tous ! :muscle:").complete();
 		FileMng.SaveCurrentState(this.battles);
 	}
+
+	@Command(name = "statusAvA", type = ExecutorType.USER)
+	private void statusAvA(User user, MessageChannel channel, Message message) {
+		statusAva(user, channel, message);
+	}
+
+	@Command(name = "statusava", type = ExecutorType.USER)
+	private void statusava(User user, MessageChannel channel, Message message) {
+		statusAva(user, channel, message);
+	}
 	
 	@Command(name = "statusAva", type = ExecutorType.USER)
 	private void statusAva(User user, MessageChannel channel, Message message) {
@@ -144,6 +150,11 @@ public class AvaCommand {
 		status = status + battle.FormattedString();
 		status = status + "```";
 		channel.sendMessage(status).complete();
+	}
+	
+	@Command(name = "myteam", type = ExecutorType.USER)
+	private void myteam(User user, MessageChannel channel, Message message) {
+		myTeam(user, channel, message);
 	}
 	
 	@Command(name = "myTeam", type = ExecutorType.USER)
@@ -213,7 +224,17 @@ public class AvaCommand {
 		battle.RemoveSoldier(player);
 		channel.sendMessage(player.getPseudo() + " a été explusé de l'Ava :smiling_imp:").complete();
 		FileMng.SaveCurrentState(this.battles);
+	}
+	
+	@Command(name = "help", type = ExecutorType.USER)
+	private void help(User user, MessageChannel channel, Message message) {
 		
+		channel.sendMessage("```"
+				+ "Commandes disponibles :\n\n"
+				+ "!join [personnage] [classe] [lvl]\n -> Rejoindre l'AvA\n\n"
+				+ "!leave\n -> Quitter l'AvA\n\n"
+				+ "!statusAva\n -> Affiche les équipes de l'AvA en cours\n\n"
+				+ "!myTeam\n -> Affiche votre équipe```").complete();
 	}
 	
 }
