@@ -1,7 +1,9 @@
 package net.avateambuilder.main;
 
 
+import java.awt.Color;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -13,9 +15,15 @@ import net.avateambuilder.model.Battle;
 import net.avateambuilder.model.Player;
 import net.avateambuilder.model.Player.Classe;
 import net.avateambuilder.model.Team;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.entities.EmbedType;
+import net.dv8tion.jda.core.entities.EntityBuilder;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.MessageEmbed.AuthorInfo;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.MessageEmbedEvent;
 
 public class AvaCommand {
 
@@ -149,7 +157,21 @@ public class AvaCommand {
 		String status = "```";
 		status = status + battle.FormattedString();
 		status = status + "```";
-		channel.sendMessage(status).complete();
+		MessageEmbed msg = EntityBuilder.createMessageEmbed(
+										null,
+										"AvA : " + battle.getName(),
+										status, EmbedType.RICH,
+										OffsetDateTime.now(),
+										Color.BLACK,
+										null,
+										null,
+										new AuthorInfo("Amnezia", null, null, null),
+										null,
+										null,
+										null,
+										null);
+		
+		channel.sendMessage(msg).complete();
 	}
 	
 	@Command(name = "myteam", type = ExecutorType.USER)

@@ -177,9 +177,9 @@ public class Battle {
 
 		String message = "";
 		int armySize = this.army.size();
-		message = message + "AvA : " + this.name + "\n";
 		for (int i = 0; i < armySize;i++) {
 			Team team = army.get(i);
+			if (team == null) continue;
 			message = message + team.FormattedString();
 			message = message + "\n";
 		}
