@@ -17,9 +17,21 @@ repositories {
 dependencies {
   compile 'net.dv8tion:JDA:3.5.0_327'
   compile 'com.googlecode.json-simple:json-simple:1.1.1'
+  compile 'com.github.jsimone:webapp-runner:8.5.11.3'
 }
 
 compileJava.options.encoding = 'UTF-8'
 
-task stage(dependsOn: ['build', 'clean'])
+task stage() {
+    dependsOn build, clean
+}
 build.mustRunAfter clean
+
+task copyToLib(type: Copy) {
+    into "$buildDir/server"
+    from(configurations.compile) {
+        include "webapp-runner*"
+    }
+}
+
+stage.dependsOn(copyToLib)
